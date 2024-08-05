@@ -12,8 +12,8 @@ namespace json {
   public:
     null() = default;
     null(std::nullptr_t) {}
-    bool operator==(const null&) const { return true; }
-    bool operator!=(const null&) const { return false; }
+    [[nodiscard]] bool operator==(const null&) const { return true; }
+    [[nodiscard]] bool operator!=(const null&) const { return false; }
   };
 
   class string {
@@ -24,11 +24,11 @@ namespace json {
     template<std::size_t N>
     string(const char(&value)[N]) : _value(value) {}
 
-    auto operator<=>(const string& other) const { return _value <=> other._value; };
-    bool operator==(const string& other) const = default;
-    bool operator!=(const string& other) const = default;
+    [[nodiscard]] auto operator<=>(const string& other) const { return _value <=> other._value; };
+    [[nodiscard]] bool operator==(const string& other) const = default;
+    [[nodiscard]] bool operator!=(const string& other) const = default;
 
-    std::string value() const { return _value; }
+    [[nodiscard]] std::string value() const { return _value; }
   private:
     std::string _value{};
   };
@@ -40,10 +40,10 @@ namespace json {
     template <typename T> requires ((std::floating_point<T> || std::integral<T>) && !std::same_as<std::remove_cvref_t<T>, bool>)
       number(const T value) : _value(value) {}
 
-    auto operator<=>(const number& other) const { return _value <=> other._value; };
-    bool operator==(const number& other) const = default;
-    bool operator!=(const number& other) const = default;
-    double value() const { return _value; }
+    [[nodiscard]] auto operator<=>(const number& other) const { return _value <=> other._value; };
+    [[nodiscard]] bool operator==(const number& other) const = default;
+    [[nodiscard]] bool operator!=(const number& other) const = default;
+    [[nodiscard]] double value() const { return _value; }
   private:
     double _value{};
   };
@@ -55,9 +55,9 @@ namespace json {
     template <typename T> requires std::same_as<std::remove_cvref_t<T>, bool>
     boolean(const T value) : _value(value) {}
 
-    bool operator==(const boolean& other) const { return _value == other._value; };
-    bool operator!=(const boolean& other) const { return _value != other._value; };
-    bool value() const { return _value; }
+    [[nodiscard]] bool operator==(const boolean& other) const { return _value == other._value; };
+    [[nodiscard]] bool operator!=(const boolean& other) const { return _value != other._value; };
+    [[nodiscard]] bool value() const { return _value; }
   private:
     bool _value{};
   };
@@ -83,44 +83,45 @@ namespace json {
     std::string dump() const;
     std::size_t size() const;
 
-    inline value& operator[](const std::string& key) { return get<json::object>().at(key); }
-    inline const value& operator[](const std::string& key) const { return get<json::object>().at(key); }
+    [[nodiscard]] inline value& operator[](const std::string& key) { return get<json::object>().at(key); }
+    [[nodiscard]] inline const value& operator[](const std::string& key) const { return get<json::object>().at(key); }
 
-    inline value& operator[](const std::size_t index) { return get<json::array>()[index]; }
-    inline const value& operator[](const std::size_t index) const { return get<json::array>()[index]; }
+    [[nodiscard]] inline value& operator[](const std::size_t index) { return get<json::array>()[index]; }
+    [[nodiscard]] inline const value& operator[](const std::size_t index) const { return get<json::array>()[index]; }
 
     template<typename T>
-    T& get() {
+    [[nodiscard]] T& get() {
       return std::get<T>(*this);  
     }
 
-    template<typename T>
-    const T& get() const {
+    template<typename T> 
+    [[nodiscard]] const T& get() const {
       return std::get<T>(*this);
     }
 
+
     template<typename T>
-    bool is() const {
+    [[nodiscard]] bool is() const {
       return std::holds_alternative<T>(*this);
     }
 
     template<typename T>
-    T* get_if() {
+    [[nodiscard]] T* get_if() {
       return std::get_if<T>(this);
     }
 
     template<typename T>
-    const T* get_if() const {
+    [[nodiscard]] const T* get_if() const {
       return std::get_if<T>(this);
     }
 
   };
 
-  inline bool operator==(const value& lhs, const value& rhs) {
+  [[nodiscard]] inline bool operator==(const value& lhs, const value& rhs) {
     return static_cast<value_variant_t>(lhs) == static_cast<value_variant_t>(rhs);
   }
 
-  inline bool operator!=(const value& lhs, const value& rhs) {
+  [[nodiscard]] inline bool operator!=(const value& lhs, const value& rhs) {
     return static_cast<value_variant_t>(lhs) != static_cast<value_variant_t>(rhs);
   }
 

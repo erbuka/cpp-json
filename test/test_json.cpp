@@ -23,8 +23,8 @@ int main() {
   obj["key2"] = "value2";
   obj["key3"] = true;
   obj["key4"] = nullptr;
-  obj["key5"] = json::array{1, 2, 3};
-  obj["key6"] = json::object{{"key1", 1}, {"key2", 2}};
+  obj["key5"] = json::array{ 1, 2, 3 };
+  obj["key6"] = json::object{ {"key1", 1}, {"key2", 2} };
 
   // Array setters
   json::array arr;
@@ -32,8 +32,8 @@ int main() {
   arr.push_back("value2");
   arr.push_back(true);
   arr.push_back(nullptr);
-  arr.push_back(json::array{1, 2, 3});
-  arr.push_back(json::object{{"key1", 1}, {"key2", 2}});
+  arr.push_back(json::array{ 1, 2, 3 });
+  arr.push_back(json::object{ {"key1", 1}, {"key2", 2} });
 
   // Getters
   ASSERT_TRUE(val.size() == 6);
@@ -45,7 +45,7 @@ int main() {
   ASSERT_TRUE(val["key6"].get<json::object>().size() == 2.0);
   ASSERT_TRUE(val["key6"]["key1"].get<json::number>().value() == 1.0);
   ASSERT_TRUE(val["key6"]["key2"].get<json::number>().value() == 2.0);
-  
+
   // Loops
   for (auto& [key, v] : val.get<json::object>()) {
     std::cout << key << '\n';
