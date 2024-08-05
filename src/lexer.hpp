@@ -11,8 +11,8 @@ namespace json::internal {
 
     template<typename T>
     struct identity_equality {
-      bool operator==(const T&) const { return true; }
-      bool operator!=(const T&) const { return false; }
+      constexpr bool operator==(const T&) const { return true; }
+      constexpr bool operator!=(const T&) const { return false; }
     };
 
     struct eof : identity_equality<eof> {};

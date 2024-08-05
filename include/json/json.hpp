@@ -79,20 +79,48 @@ namespace json {
   public:
     using value_variant_t::value_variant_t;
     using value_variant_t::operator=;
+
     std::string dump() const;
+    std::size_t size() const;
+
+    inline value& operator[](const std::string& key) { return get<json::object>().at(key); }
+    inline const value& operator[](const std::string& key) const { return get<json::object>().at(key); }
+
+    inline value& operator[](const std::size_t index) { return get<json::array>()[index]; }
+    inline const value& operator[](const std::size_t index) const { return get<json::array>()[index]; }
 
     template<typename T>
-    T& as() {
+    T& get() {
       return std::get<T>(*this);  
+    }
+
+    template<typename T>
+    const T& get() const {
+      return std::get<T>(*this);
+    }
+
+    template<typename T>
+    bool is() const {
+      return std::holds_alternative<T>(*this);
+    }
+
+    template<typename T>
+    T* get_if() {
+      return std::get_if<T>(this);
+    }
+
+    template<typename T>
+    const T* get_if() const {
+      return std::get_if<T>(this);
     }
 
   };
 
-  constexpr bool operator==(const value& lhs, const value& rhs) {
+  inline bool operator==(const value& lhs, const value& rhs) {
     return static_cast<value_variant_t>(lhs) == static_cast<value_variant_t>(rhs);
   }
 
-  constexpr bool operator!=(const value& lhs, const value& rhs) {
+  inline bool operator!=(const value& lhs, const value& rhs) {
     return static_cast<value_variant_t>(lhs) != static_cast<value_variant_t>(rhs);
   }
 
