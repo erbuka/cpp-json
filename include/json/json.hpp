@@ -19,6 +19,7 @@ namespace json {
   class string {
   public:
     string() = default;
+    string(const std::string& value) : _value(value) {}
     string(const std::string_view value) : _value(value) {}
 
     template<std::size_t N>
@@ -75,10 +76,23 @@ namespace json {
     boolean,
     number>;
 
+  template<typename T>
+  concept custom_convertible_to_value = requires(const T t) {
+    { t.to_json() } -> std::same_as<value>;
+  }; 
+
+  template<typename T>
+  concept custom_convertible_from_value = requires(const value v) {
+    { T::from_json(v) } -> std::same_as<T>;
+  };
+
   class value : public value_variant_t {
   public:
     using value_variant_t::value_variant_t;
     using value_variant_t::operator=;
+
+    template<typename T> requires custom_convertible_to_value<T>
+    value(const T& value) : value(value.to_json()) {}
 
     std::string dump() const;
     std::size_t size() const;
@@ -89,7 +103,13 @@ namespace json {
     [[nodiscard]] inline value& operator[](const std::size_t index) { return get<json::array>()[index]; }
     [[nodiscard]] inline const value& operator[](const std::size_t index) const { return get<json::array>()[index]; }
 
-    template<typename T>
+
+    template<typename T> requires custom_convertible_from_value<T>
+    [[nodiscard]] T get() const {
+      return T::from_json(*this);
+    }
+
+    template<typename T> requires (!custom_convertible_from_value<T>)
     [[nodiscard]] T& get() {
       return std::get<T>(*this);  
     }
