@@ -8,22 +8,26 @@ struct test_str {
   float x{};
   float y{};
   std::string name{};
-  json::value to_json() const {
+};
+
+template<>
+class json::serializer<test_str> {
+public:
+  json::value to_json(const test_str& v) {
     return json::object{
-      {"x", x},
-      {"y", y},
-      {"name", name},
+      {"x", v.x},
+      {"y", v.y},
+      {"name", v.name},
     };
   }
 
-  static test_str from_json(const json::value& v) {
+  test_str from_json(const json::value& v) {
     test_str result;
     result.x = v["x"].get<json::number>().value();
     result.y = v["y"].get<json::number>().value();
     result.name = v["name"].get<json::string>().value();
     return result;
   }
-
 };
 
 int main() {

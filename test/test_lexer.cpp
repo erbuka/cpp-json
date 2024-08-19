@@ -9,7 +9,7 @@
 
 
 void test_lexer(const std::string_view input, const std::vector<json::internal::token> expected) {
-  std::stringstream ss(std::string{ input });
+  std::istringstream ss(std::string{ input });
   json::internal::lexer lex(ss);
 
   for (const auto& exp : expected) {

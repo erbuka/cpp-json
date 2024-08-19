@@ -7,6 +7,8 @@
 #include <iterator>
 #include <format>
 
+#include "parser.hpp"
+
 namespace json {
 
   template<typename R, typename OutIter, typename Value = std::ranges::range_value_t<R>>
@@ -86,5 +88,12 @@ namespace json {
       }
     }, static_cast<value_variant_t>(*this));
   }
+
+  value parse(const std::string& str) {
+    std::istringstream in(str);
+    internal::lexer lex(in);
+    return internal::parser(lex).parse();
+  }
+
 
 }

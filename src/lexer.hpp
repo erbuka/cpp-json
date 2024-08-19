@@ -71,11 +71,11 @@ namespace json::internal {
   };
 
   constexpr bool operator==(const token& lhs, const token& rhs) {
-    return static_cast<token_variant_t>(lhs) == static_cast<token_variant_t>(rhs);
+    return static_cast<const token_variant_t&>(lhs) == static_cast<const token_variant_t&>(rhs);
   }
 
   constexpr bool operator!=(const token& lhs, const token& rhs) {
-    return static_cast<token_variant_t>(lhs) != static_cast<token_variant_t>(rhs);
+    return static_cast<const token_variant_t&>(lhs) != static_cast<const token_variant_t&>(rhs);
   }
 
 
@@ -100,6 +100,7 @@ namespace json::internal {
       else {
         throw_error("Unexpected token");
       }
+      // Unreachable
     }
 
     void reset(const marked_position& pos);
